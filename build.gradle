@@ -5,7 +5,7 @@ plugins {
     id 'org.graalvm.buildtools.native' version '0.10.2'
 }
 
-group = 'ai.fassto'
+group = 'com.jesomi'
 version = '0.0.1-SNAPSHOT'
 
 java {
