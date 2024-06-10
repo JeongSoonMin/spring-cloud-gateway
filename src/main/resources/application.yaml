@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: cloud-gateway-test
+    name: spring-cloud-gateway
   jwt:
     secret-key: "jwt.token.secret"
   threads:
