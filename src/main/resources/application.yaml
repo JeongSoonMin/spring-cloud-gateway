@@ -1,0 +1,58 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: cloud-gateway-test
+  jwt:
+    secret-key: "jwt.token.secret"
+  threads:
+    virtual:
+      enabled: true
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - 'http://localhost:3000'
+            allowedMethods:
+              - '*'
+            allowedHeaders:
+              - '*'
+            allowCredentials: true
+      default-filters: # 모든 라우팅에 적용되는 global 필터
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+        - name: LoggingFilter
+          args:
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: management/file-manage/upload/{fileManageCd}
+          uri: http://localhost:8080 # management host
+          predicates:
+            - Path=/management/file-manage/upload/{fileManageCd}
+            - Method=GET
+          filters:
+            - name: AuthenticationFilter
+              args:
+                allow-role:
+                  - ADMIN
+                  - MARKETING
+                  - SETTLE
+        - id: management/file-manage/pre-signed-url/{fileManageCd}
+          uri: http://localhost:8080 # management host
+          predicates:
+            - Path=/management/file-manage/pre-signed-url/{fileManageCd}
+            - Method=GET
+          filters:
+            - name: AuthenticationFilter
+              args:
+                allow-role:
+                  - ADMIN
+                  - CS
+                  - SALES
+                  - MARKETING
+                  - SETTLE
+
+
