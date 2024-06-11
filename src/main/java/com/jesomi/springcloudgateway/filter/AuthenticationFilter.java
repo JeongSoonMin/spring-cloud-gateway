@@ -38,7 +38,6 @@ public class AuthenticationFilter extends
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            ServerHttpResponse response = exchange.getResponse();
 
             String accessToken = request.getHeaders().getFirst("Authorization");
             Jws<Claims> claimsJws;

@@ -37,13 +37,4 @@ public class CommonResponse {
                 .build();
     }
 
-    public static CommonResponse fail(String message, String errorCode, ErrorType errorType) {
-        return CommonResponse.builder()
-                .result(Result.FAIL)
-                .message(message)
-                .errorCode(errorCode)
-                .errorType(errorType)
-                .build();
-    }
-
 }

@@ -11,16 +11,6 @@ spring:
       enabled: true
   cloud:
     gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - 'http://localhost:3000'
-            allowedMethods:
-              - '*'
-            allowedHeaders:
-              - '*'
-            allowCredentials: true
       default-filters: # 모든 라우팅에 적용되는 global 필터
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
         - name: LoggingFilter
@@ -54,5 +44,17 @@ spring:
                   - SALES
                   - MARKETING
                   - SETTLE
-
+# circuitbreaker 설정
+resilience4j:
+  circuitbreaker:
+    instances:
+      defaultCircuitBreaker:
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: 10s
+  timelimiter:
+    instances:
+      defaultCircuitBreaker:
+        timeoutDuration: 5s
 
