@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: spring-cloud-gateway
+  main:
+    banner-mode: off
   jwt:
     secret-key: "jwt.token.secret"
   threads:
@@ -57,4 +59,21 @@ resilience4j:
     instances:
       defaultCircuitBreaker:
         timeoutDuration: 5s
-
+# actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, gateway
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
+    gateway:
+      enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
