@@ -1,0 +1,51 @@
+# circuitbreaker 설정
+resilience4j:
+  circuitbreaker:
+    instances:
+      defaultCircuitBreaker:
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: 10s
+  timelimiter:
+    instances:
+      defaultCircuitBreaker:
+        timeoutDuration: 60s
+# gateway routes 설정
+spring:
+  cloud:
+    gateway:
+      default-filters: # 모든 라우팅에 적용되는 global 필터
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_UNIQUE
+        - CircuitBreaker=defaultCircuitBreaker
+        - name: LoggingFilter
+          args:
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: management/file-manage/upload/{fileManageCd}
+          uri: http://localhost:8080 # management host
+          predicates:
+            - Path=/management/file-manage/upload/{fileManageCd}
+            - Method=GET
+          filters:
+            - name: AuthenticationFilter
+              args:
+                allow-role:
+                  - ADMIN
+                  - MARKETING
+                  - SETTLE
+        - id: management/file-manage/pre-signed-url/{fileManageCd}
+          uri: http://localhost:8080 # management host
+          predicates:
+            - Path=/management/file-manage/pre-signed-url/{fileManageCd}
+            - Method=GET
+          filters:
+            - name: AuthenticationFilter
+              args:
+                allow-role:
+                  - ADMIN
+                  - CS
+                  - SALES
+                  - MARKETING
+                  - SETTLE

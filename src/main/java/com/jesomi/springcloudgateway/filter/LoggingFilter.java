@@ -24,11 +24,11 @@ public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Co
             ServerHttpResponse response = exchange.getResponse();
 
             if (config.isPreLogger()) {
-                log.info("Global Filter Start: request id -> {}", request.getId());
+                log.info("Global Filter Start: request id, path -> {}, {}", request.getId(), request.getPath());
             }
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 if (config.isPostLogger()) {
-                    log.info("Global Filter End: response code -> {}", response.getStatusCode());
+                    log.info("Global Filter End: response id, path, code -> {}, {}, {}", request.getId(), request.getPath(), response.getStatusCode());
                 }
             }));
         };
