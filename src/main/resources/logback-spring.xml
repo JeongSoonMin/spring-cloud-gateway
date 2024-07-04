@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+  <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+
+  <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level} [%thread] %clr{[%logger{1.}]} : %msg [traceID=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags}]%n" />
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <springProfile name="local">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+  </springProfile>
+  <springProfile name="dev|stg">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+  </springProfile>
+  <springProfile name="prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+  </springProfile>
+</configuration>
