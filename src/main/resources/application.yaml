@@ -34,3 +34,16 @@ management:
       enabled: true
     readinessState:
       enabled: true
+# swagger 설정
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui/index.html
+    urls:
+      - url: ${AUTHS_SWAGGER_DOMAIN}/v3/api-docs
+        name: Auths
+      - url: ${MANAGEMENT_SWAGGER_DOMAIN}/v3/api-docs
+        name: Management

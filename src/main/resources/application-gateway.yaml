@@ -23,29 +23,59 @@ spring:
             preLogger: true
             postLogger: true
       routes:
+        ########## Auths Routes start ##########
+        # 사용자 로그인
+        - id: user/login
+          uri: ${AUTHS_URL}
+          predicates:
+            - Path=/fassto-admin/api/v1/user/login
+            - Method=POST
+        ########## Auths Routes end ##########
+
+        ########## Management Routes start ##########
+        # 파일 업로드 목록 조회 / 파일 업로드 완료
         - id: management/file-manage/upload/{fileManageCd}
-          uri: http://localhost:8080 # management host
+          uri: ${MANAGEMENT_URL}
           predicates:
             - Path=/management/file-manage/upload/{fileManageCd}
-            - Method=GET
+            - Method=GET, POST
           filters:
             - name: AuthenticationFilter
               args:
-                allow-role:
+                allow-roles:
                   - ADMIN
+                  - CS
                   - MARKETING
+                  - SALES
                   - SETTLE
+        # preSignedUrl 요청
         - id: management/file-manage/pre-signed-url/{fileManageCd}
-          uri: http://localhost:8080 # management host
+          uri: ${MANAGEMENT_URL}
           predicates:
             - Path=/management/file-manage/pre-signed-url/{fileManageCd}
             - Method=GET
           filters:
             - name: AuthenticationFilter
               args:
-                allow-role:
+                allow-roles:
                   - ADMIN
                   - CS
-                  - SALES
                   - MARKETING
+                  - SALES
                   - SETTLE
+        # 파일 업로드 수정 / 삭제
+        - id: management/file-manage/upload/{fileManageCd}/{fileSeq}
+          uri: ${MANAGEMENT_URL}
+          predicates:
+            - Path=/management/file-manage/upload/{fileManageCd}/{fileSeq}
+            - Method=PUT, DELETE
+          filters:
+            - name: AuthenticationFilter
+              args:
+                allow-roles:
+                  - ADMIN
+                  - CS
+                  - MARKETING
+                  - SALES
+                  - SETTLE
+        ########## Management Routes end ##########

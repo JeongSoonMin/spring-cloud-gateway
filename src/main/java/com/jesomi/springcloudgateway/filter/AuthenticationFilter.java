@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Objects;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Component
@@ -75,7 +77,39 @@ public class AuthenticationFilter extends
                         .orElseThrow(ForbiddenException::new);
             }
 
+            // ClientIP 정보 header 로 전달
+            request.mutate().header("clientIp", this.getIpAddr(request));
+
             return chain.filter(exchange);
         };
+    }
+
+    private String getIpAddr(ServerHttpRequest request) {
+        String ip = request.getHeaders().getFirst("X-Forwarded-For");
+        if(StringUtils.hasLength(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            int index = ip.indexOf(',');
+            if(index != -1) {
+                return ip.substring(0, index);
+            } else {
+                return ip;
+            }
+        }
+        ip = request.getHeaders().getFirst("Proxy-Client-IP");
+        if (StringUtils.hasLength(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        ip = request.getHeaders().getFirst("WL-Proxy-Client-IP");
+        if (StringUtils.hasLength(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        ip = request.getHeaders().getFirst("HTTP_CLIENT_IP");
+        if (StringUtils.hasLength(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        ip = request.getHeaders().getFirst("HTTP_X_FORWARDED_FOR");
+        if (StringUtils.hasLength(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        return Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress();
     }
 }

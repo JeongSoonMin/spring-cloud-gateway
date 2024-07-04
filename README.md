@@ -11,13 +11,16 @@ Settlement Gateway Application
   * MANAGEMENT_URL=http://localhost:8080
   * AUTHS_URL=http://localhost:8081
   * JWT_SECRET_KEY=xxxx
+  * MANAGEMENT_SWAGGER_DOMAIN=http://localhost:8080
+  * AUTHS_SWAGGER_DOMAIN=http://localhost:8081
 
 ## 개발 구성
 * application-gateway 에 설정된 경로로 route
-* AuthenticationFilter 적용될 경우 JWT 토큰 체크하여 proxy되는 applicaiton의 request header에 두 항목 전달
+* AuthenticationFilter 적용될 경우 JWT 토큰 체크하여 proxy되는 applicaiton의 request header에 항목 전달
   * userId : ex) tb_user.USER_ID
   * userRole : ex) ADMIN
-  * 토큰 만료된 경우 AccessTokenExpiredException 처리. HttpStatus: 401. errorCode: COMMON_ACCESS_TOKEN_EXPIRE 
+  * 토큰 만료된 경우 AccessTokenExpiredException 처리. HttpStatus: 401. errorCode: COMMON_ACCESS_TOKEN_EXPIRE
+  * clientIp 항목으로 헤더 정보 전달
 * allow-roles 지정되어 있을 경우
   * 해당 토큰의 roles이 allow-roles에 등록된 권한 일 때만 route
   * 없는 경우 ForbiddenException 처리. HttpStatus: 403. errorCode: COMMON_FORBIDDEN
@@ -28,7 +31,7 @@ Settlement Gateway Application
     - id: applicationPath/기능Path  # 
       uri: ${MANAGEMENT_URL} # ex) SecretsManager에 정의된 변수 사용 
       predicates:
-        - Path=/fassto-admin/api/v1/applicationPath/기능path # gateway에서 받는 URI 이며, rewrite가 설정되어 있지 않을 경우 proxy 되는 경로
+        - Path=/applicationPath/기능path # gateway에서 받는 URI 이며, rewrite가 설정되어 있지 않을 경우 proxy 되는 경로
         - Method=GET # 허용되는 메소드. ex) GET, POST, PUT, DELETE / 같은 Path의 GET, PUT 이 있을 경우 하나의 설정에 GET, PUT으로 설정
       filters:
         - RewritePath=/기능path, /기능anotherPath # 다른 경로로 라우팅 필요할 경우 사용.
